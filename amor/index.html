@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuestra Historia Infinita</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    color:white;
+    text-align:center;
+    overflow-x:hidden;
+}
+
+/* Fondo estrellas */
+.stars {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    animation: moveStars 120s linear infinite;
+    z-index:-1;
+}
+@keyframes moveStars {
+    from {background-position: 0 0;}
+    to {background-position: 10000px 5000px;}
+}
+
+/* Secciones */
+.section{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    opacity:0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+}
+.section.active{
+    opacity:1;
+    transform: translateY(0);
+}
+
+.card{
+    background: rgba(255,255,255,0.08);
+    padding:30px;
+    border-radius:25px;
+    backdrop-filter: blur(15px);
+    max-width:700px;
+    margin-bottom:30px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.1);
+}
+
+/* ✨ NUEVO: Glow al pasar mouse */
+.card:hover{
+    box-shadow:0 0 40px rgba(255,255,255,0.4);
+    transform:scale(1.02);
+    transition:0.4s;
+}
+
+.locked{ opacity:0.6; }
+
+button{
+    padding:12px 28px;
+    margin-top:20px;
+    border:none;
+    border-radius:40px;
+    background: linear-gradient(45deg, #ffffff, #ffd6f6);
+    color:#2c5364;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover{ transform:scale(1.05); }
+
+/* ✨ NUEVO: efecto presión botón */
+button:active{
+    transform:scale(0.95);
+}
+
+#diasJuntos{
+    position:fixed;
+    top:15px;
+    left:20px;
+    font-size:14px;
+    background:rgba(255,255,255,0.1);
+    padding:10px 18px;
+    border-radius:30px;
+    backdrop-filter: blur(10px);
+}
+
+.hidden{ display:none; }
+
+.frasePrincipal{
+    font-size:1.6em;
+    margin-bottom:20px;
+    text-shadow:0 0 15px rgba(255,255,255,0.6);
+}
+
+/* ✨ NUEVO: corazones flotantes */
+.corazonFlotante{
+    position:fixed;
+    font-size:20px;
+    animation: flotar 3s linear forwards;
+    pointer-events:none;
+    z-index:999;
+}
+
+@keyframes flotar{
+    0%{ transform:translateY(0); opacity:1;}
+    100%{ transform:translateY(-200px); opacity:0;}
+}
+
+.carousel{
+    position:relative;
+    background:rgba(0,0,0,0.3);
+    border-radius:20px;
+    padding:10px;
+}
+
+.carousel img{
+    width:100%;
+    max-height:350px;
+    object-fit:contain;
+    border-radius:20px;
+    transition:opacity 0.8s ease;
+}
+
+.puntos{ margin-top:10px; }
+.punto{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.4);
+    margin:5px;
+}
+.punto.activo{ background:white; }
+
+.mensajeBox{
+    margin:30px 0;
+    padding:20px;
+    background:rgba(255,192,203,0.15);
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(255,192,203,0.3);
+}
+
+.juegoContainer{ margin-top:20px; }
+
+.juego-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:15px;
+}
+
+.cuadro{
+    background:rgba(255,255,255,0.1);
+    height:60px;
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    transition:0.3s;
+    animation: brillo 2s infinite;
+}
+.cuadro:hover{ background:rgba(255,255,255,0.2); }
+
+@keyframes brillo{
+    0%{ box-shadow:0 0 5px rgba(255,192,203,0.3);}
+    50%{ box-shadow:0 0 20px rgba(255,192,203,0.8);}
+    100%{ box-shadow:0 0 5px rgba(255,192,203,0.3);}
+}
+
+.ganador{
+    animation: ganar 1s infinite alternate;
+}
+@keyframes ganar{
+    from{ box-shadow:0 0 10px pink;}
+    to{ box-shadow:0 0 40px hotpink;}
+}
+
+.fraseSecreta{
+    margin-top:20px;
+    font-size:1.2em;
+    color:#ffd6f6;
+    text-shadow:0 0 10px pink;
+}
+
+
+/* VIDEO */
+.videoBox{
+    margin-top:30px;
+    padding:20px;
+    background:rgba(255,255,255,0.08);
+    border-radius:20px;
+    backdrop-filter: blur(10px);
+    box-shadow:0 0 25px rgba(255,255,255,0.15);
+}
+
+.videoRomantico{
+    width:100%;
+    max-width:600px;
+    border-radius:15px;
+    margin-top:15px;
+    box-shadow:0 0 20px rgba(255,192,203,0.4);
+    transition:0.4s;
+}
+
+.videoRomantico:hover{
+    transform:scale(1.02);
+}
+
+.spotifyBox{
+    margin:25px 0;
+    padding:15px;
+    background:rgba(255,255,255,0.08);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 25px rgba(255,255,255,0.15);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+<div id="diasJuntos"></div>
+
+<div class="section active" id="inicio">
+    <h1>🐢 Nuestra Historia ♾️✨</h1>
+    <h2>Solo es el comienzo.</h2>
+    <button onclick="mostrarCapitulos()">Entrar</button>
+</div>
+
+<div class="section hidden" id="capitulos">
+    <div class="card">
+        <h1>Capítulo 1 🌙</h1>
+        <h2>14 de Febrero</h2>
+        <button onclick="abrirCap1()">Entrar</button>
+    </div>
+
+    <div class="card locked">
+        <h1>Capítulo 2 🔒</h1>
+        <h2>20 de Febrero</h2>
+        <div id="contadorDesbloqueo"></div>
+        <button id="btnCap2" onclick="abrirCap2()">Entrar</button>
+    </div>
+</div>
+
+<div class="section hidden" id="contenidoCap1">
+    <div class="card">
+
+        <div class="frasePrincipal">
+            Porque cada momento contigo se HERMOSO ✨🐢
+        </div>
+
+        <div class="spotifyBox">
+<iframe data-testid="embed-iframe"
+style="border-radius:12px"
+src="https://open.spotify.com/embed/track/5Ejw3lC6Srj8VK4fHgTZAi?utm_source=generator&theme=0"
+width="100%"
+height="352"
+frameBorder="0"
+allowfullscreen=""
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+loading="lazy">
+</iframe>
+</div>
+
+        <!-- ✨ NUEVO mensaje secreto doble click -->
+        <div id="mensajeSecretoExtra" class="hidden" style="margin-top:15px; color:#ffb6f9;">
+        Eres lo mejor que me ha pasado 💖
+        </div>
+
+        
+        <!-- =============================== -->
+        <!--   📸 AQUI VAN TUS FOTOS        -->
+        <!-- Guarda tus imágenes en la MISMA carpeta -->
+        <!-- Nombres actuales configurados: -->
+        <!-- foto1.jpg, foto2.jpg, foto3.jpg -->
+        <!-- Si quieres más fotos agrégalas en -->
+        <!-- const fotos=[...] en el script -->
+        <!-- =============================== -->
+
+        <div class="carousel">
+            <img id="fotoCarrusel" src="foto1.jpg">
+            <div class="puntos" id="puntos"></div>
+        </div>
+
+        <div class="mensajeBox">
+            <h3>💌 Un pedacito de lo que siento por ti</h3>
+            <p id="mensajeMaquina"></p>
+        </div>
+
+        <!-- VIDEO SENTIMENTAL -->
+        
+        <!-- =============================== -->
+        <!--   🎬 AQUI VA TU VIDEO          -->
+        <!-- Guarda el video en la misma carpeta -->
+        <!-- Nombre configurado: nuestro_video.mp4 -->
+        <!-- =============================== -->
+
+        <div class="videoBox">
+            <h3>🎬 Nuestro momento</h3>
+            <video controls class="videoRomantico">
+                <source src="nuestro_video.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <button onclick="mostrarJuego()">🎮 Jugar</button>
+
+        <div id="juegoArea" class="hidden juegoContainer">
+            <h3>Encuentra el corazón 💖</h3>
+            <div class="juego-grid">
+                <div class="cuadro" onclick="revisar(this)"></div>
+                <div class="cuadro" onclick="revisar(this)"></div>
+                <div class="cuadro" onclick="revisar(this)"></div>
+                <div class="cuadro" onclick="revisar(this)"></div>
+                <div class="cuadro" onclick="revisar(this)"></div>
+                <div class="cuadro" onclick="revisar(this)"></div>
+            </div>
+            <div id="fraseSecreta" class="fraseSecreta hidden">
+                Si encontraste el corazón… es porque siempre has tenido el mío 💖
+            </div>
+        </div>
+
+        <button onclick="volver()">Volver</button>
+    </div>
+</div>
+
+<div class="section hidden" id="contenidoCap2">
+    <div class="card">
+        <h1>Capítulo 2 ✨</h1>
+        <p>AQUÍ VA MI MENSAJE DEL 20</p>
+        <button onclick="volver()">Volver</button>
+    </div>
+</div>
+
+
+
+<script>
+
+function cambiarSeccion(actual,nueva){
+    document.getElementById(actual).classList.remove("active");
+    setTimeout(()=>{
+        document.getElementById(actual).classList.add("hidden");
+        document.getElementById(nueva).classList.remove("hidden");
+        setTimeout(()=>{document.getElementById(nueva).classList.add("active");},50);
+    },400);
+}
+
+function mostrarCapitulos(){ cambiarSeccion("inicio","capitulos"); }
+
+function abrirCap1(){ 
+    cambiarSeccion("capitulos","contenidoCap1"); 
+   
+    setTimeout(escribirMaquina,500);
+    lanzarCorazones(); // ✨ añadido
+}
+
+function volver(){
+    
+    cambiarSeccion("contenidoCap1","capitulos");
+}
+
+const fechaObjetivo=new Date("February 20, 2026 00:00:00").getTime();
+const fechaInicio=new Date("February 20, 2025 00:00:00").getTime();
+
+function abrirCap2(){
+    if(new Date().getTime()>=fechaObjetivo){
+        cambiarSeccion("capitulos","contenidoCap2");
+    }
+}
+
+setInterval(function(){
+    const ahora=new Date().getTime();
+    const diferencia=ahora-fechaInicio;
+    const dias=Math.floor(diferencia/(1000*60*60*24));
+    const horas=Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
+    const minutos=Math.floor((diferencia%(1000*60*60))/(1000*60));
+    const segundos=Math.floor((diferencia%(1000*60))/1000);
+    document.getElementById("diasJuntos").innerHTML=
+    "🐢 "+dias+"d "+horas+"h "+minutos+"m "+segundos+" juntos ♾️";
+},1000);
+
+setInterval(function(){
+    const ahora=new Date().getTime();
+    const distancia=fechaObjetivo-ahora;
+
+    if(distancia>0){
+        const dias=Math.floor(distancia/(1000*60*60*24));
+        const horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60));
+        const minutos=Math.floor((distancia%(1000*60*60))/(1000*60));
+        const segundos=Math.floor((distancia%(1000*60))/1000);
+        document.getElementById("contadorDesbloqueo").innerHTML=
+        "Se desbloquea en: "+dias+"d "+horas+"h "+minutos+"m "+segundos+"s ⏳";
+        document.getElementById("btnCap2").disabled=true;
+    }else{
+        document.getElementById("contadorDesbloqueo").innerHTML=
+        "Capítulo desbloqueado 💖";
+        document.getElementById("btnCap2").disabled=false;
+    }
+},1000);
+
+const texto="AQUÍ VA TU MENSAJE DEL 14 💙";
+let i=0;
+function escribirMaquina(){
+    const el=document.getElementById("mensajeMaquina");
+    el.innerHTML="";
+    i=0;
+    const intervalo=setInterval(()=>{
+        if(i<texto.length){
+            el.innerHTML+=texto.charAt(i);
+            i++;
+        }else{
+            clearInterval(intervalo);
+        }
+    },35);
+}
+
+const fotos=["foto1.jpg","foto2.jpg","foto3.jpg"];
+let indice=0;
+const img=document.getElementById("fotoCarrusel");
+const puntosDiv=document.getElementById("puntos");
+
+fotos.forEach((_,i)=>{
+    const punto=document.createElement("span");
+    punto.classList.add("punto");
+    if(i===0) punto.classList.add("activo");
+    puntosDiv.appendChild(punto);
+});
+
+function actualizarCarrusel(){
+    img.style.opacity=0;
+    setTimeout(()=>{
+        img.src=fotos[indice];
+        img.style.opacity=1;
+        document.querySelectorAll(".punto").forEach(p=>p.classList.remove("activo"));
+        document.querySelectorAll(".punto")[indice].classList.add("activo");
+    },400);
+}
+setInterval(()=>{
+    indice=(indice+1)%fotos.length;
+    actualizarCarrusel();
+},5000);
+
+let posicionCorazon=Math.floor(Math.random()*6);
+
+function mostrarJuego(){
+    document.getElementById("juegoArea").classList.remove("hidden");
+}
+
+function revisar(el){
+    const cuadros=document.querySelectorAll(".cuadro");
+    const index=Array.from(cuadros).indexOf(el);
+    if(index===posicionCorazon){
+        el.innerHTML="💖";
+        el.classList.add("ganador");
+        document.getElementById("fraseSecreta").classList.remove("hidden");
+        confeti(); // ✨ añadido
+    } else{
+        el.innerHTML="❌";
+    }
+}
+
+/* ✨ NUEVAS FUNCIONES */
+
+function lanzarCorazones(){
+    for(let i=0;i<20;i++){
+        const corazon=document.createElement("div");
+        corazon.innerHTML="💖";
+        corazon.classList.add("corazonFlotante");
+        corazon.style.left=Math.random()*100+"vw";
+        corazon.style.top="80vh";
+        document.body.appendChild(corazon);
+        setTimeout(()=>{corazon.remove();},3000);
+    }
+}
+
+function confeti(){
+    for(let i=0;i<30;i++){
+        const part=document.createElement("div");
+        part.innerHTML="✨";
+        part.style.position="fixed";
+        part.style.left=Math.random()*100+"vw";
+        part.style.top=Math.random()*100+"vh";
+        part.style.fontSize="15px";
+        part.style.animation="flotar 2s linear forwards";
+        document.body.appendChild(part);
+        setTimeout(()=>{part.remove();},2000);
+    }
+}
+
+document.querySelector(".frasePrincipal").addEventListener("dblclick",()=>{
+    document.getElementById("mensajeSecretoExtra").classList.toggle("hidden");
+});
+
+/* ✨ estrellas fugaces */
+setInterval(()=>{
+    const estrella=document.createElement("div");
+    estrella.innerHTML="🌠";
+    estrella.style.position="fixed";
+    estrella.style.left=Math.random()*100+"vw";
+    estrella.style.top="10vh";
+    estrella.style.fontSize="20px";
+    estrella.style.animation="flotar 2s linear forwards";
+    document.body.appendChild(estrella);
+    setTimeout(()=>{estrella.remove();},2000);
+},15000);
+
+</script>
+
+</body>
+</html>
