@@ -304,6 +304,11 @@ button:active{
     box-shadow:0 0 20px hotpink;
 }
 
+canvas{
+    touch-action: none;
+}
+
+
 
 </style>
 </head>
@@ -747,6 +752,44 @@ canvas.addEventListener("mouseup", () => {
 
 canvas.addEventListener("mouseleave", () => dibujando = false);
 canvas.addEventListener("mousemove", dibujar);
+
+/* 📱 SOPORTE PARA CELULAR */
+
+canvas.addEventListener("touchstart", function(e){
+    e.preventDefault();
+    dibujando = true;
+});
+
+canvas.addEventListener("touchend", function(e){
+    e.preventDefault();
+    dibujando = false;
+    ctx.beginPath();
+    guardarDibujoAutomatico();
+});
+
+canvas.addEventListener("touchmove", function(e){
+    e.preventDefault();
+    if(!dibujando) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+
+    ctx.lineWidth = grosorActual;
+    ctx.lineCap = "round";
+
+    if(modoGoma){
+        ctx.globalCompositeOperation = "destination-out";
+    } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = colorActual;
+    }
+
+    ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+});
+
 
 function dibujar(e){
     if(!dibujando) return;
