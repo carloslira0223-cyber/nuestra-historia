@@ -311,6 +311,55 @@ canvas {
     height: auto;       /* Mantiene la proporción */
 }
 
+/* 🎨 Estilos para la nueva paleta de colores */
+.paleta-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.color-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.color-btn:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px white;
+}
+
+/* El input original lo haremos ver como un botón arcoíris */
+#colorPicker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid white;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+}
+
+/* ✨ Efecto para cuando la goma está activada */
+.goma-activa {
+    background: #ff1493 !important; /* Un rosa fuerte */
+    color: white !important;
+    box-shadow: 0 0 15px #ff1493, 0 0 5px white; /* Brillo neón */
+    border: 2px solid white !important;
+    transform: scale(1.1); /* Se hace un poquito más grande */
+    transition: all 0.3s ease;
+}
+
 </style>
 </head>
 
@@ -429,10 +478,15 @@ loading="lazy">
 
     <!-- 🎨 PALETA DE COLORES -->
     <div style="margin:15px 0;">
-        <input type="color" id="colorPicker" value="#ff4da6">
-        <label style="margin-left:10px;">Grosor:</label>
+    <label>Elige un color o toca el arcoíris: 👇</label>
+    
+    <div class="paleta-container">
+        <div class="color-btn" style="background:#000000;" onclick="usarColor('#000000')"></div> <div class="color-btn" style="background:#ffffff;" onclick="usarColor('#ffffff')"></div> <div class="color-btn" style="background:#ff0000;" onclick="usarColor('#ff0000')"></div> <div class="color-btn" style="background:#ff69b4;" onclick="usarColor('#ff69b4')"></div> <div class="color-btn" style="background:#ffb6c1;" onclick="usarColor('#ffb6c1')"></div> <div class="color-btn" style="background:#ffa500;" onclick="usarColor('#ffa500')"></div> <div class="color-btn" style="background:#ffff00;" onclick="usarColor('#ffff00')"></div> <div class="color-btn" style="background:#00ff00;" onclick="usarColor('#00ff00')"></div> <div class="color-btn" style="background:#00ffff;" onclick="usarColor('#00ffff')"></div> <div class="color-btn" style="background:#0000ff;" onclick="usarColor('#0000ff')"></div> <div class="color-btn" style="background:#800080;" onclick="usarColor('#800080')"></div> <input type="color" id="colorPicker" value="#ff4da6" title="Elige cualquier color aquí">
+    </div>
+
+    <label style="margin-left:10px;">Grosor:</label>
         <input type="range" id="grosorPincel" min="1" max="10" value="3">
-        <button onclick="activarGoma()" style="margin-left:10px;">🧽 Goma</button>
+        <button id="btnGoma" onclick="activarGoma()" style="margin-left:10px;">🧽 Goma</button>
 
     </div>
 
@@ -730,18 +784,13 @@ let modoGoma = false;
 
 
 
-document.getElementById("colorPicker").addEventListener("input", function(){
-    colorActual = this.value;
-    modoGoma = false;
-});
+
 
 document.getElementById("grosorPincel").addEventListener("input", function(){
     grosorActual = this.value;
 });
 
-function activarGoma(){
-    modoGoma = true;
-}
+
 
 canvas.addEventListener("mousedown", () => dibujando = true);
 
@@ -860,6 +909,31 @@ function limpiarCanvas(){
 function mostrarDibujo(){
     document.getElementById("juegoDibujo").classList.remove("hidden");
 }
+
+
+// --- NUEVA LÓGICA DE HERRAMIENTAS ---
+
+// 1. Activar Goma y encender brillo
+function activarGoma(){
+    modoGoma = true; 
+    document.getElementById("btnGoma").classList.add("goma-activa");
+}
+
+// 2. Elegir color rápido y apagar brillo de goma
+function usarColor(colorHex) {
+    colorActual = colorHex;
+    document.getElementById("colorPicker").value = colorHex;
+    
+    modoGoma = false; 
+    document.getElementById("btnGoma").classList.remove("goma-activa");
+}
+
+// 3. Elegir color del arcoíris y apagar brillo de goma
+document.getElementById("colorPicker").addEventListener("input", function(){
+    colorActual = this.value;
+    modoGoma = false;
+    document.getElementById("btnGoma").classList.remove("goma-activa");
+});
 
 /* 🎨 Retos */
 const retos = [
