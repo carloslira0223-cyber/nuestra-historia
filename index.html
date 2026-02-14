@@ -305,6 +305,12 @@ button:active{
 }
 
 
+canvas {
+    touch-action: none; /* Bloquea gestos del navegador para que no interfieran al dibujar */
+    max-width: 100%;    /* Evita que se salga de la pantalla */
+    height: auto;       /* Mantiene la proporción */
+}
+
 </style>
 </head>
 
@@ -745,49 +751,51 @@ canvas.addEventListener("mouseup", () => {
     guardarDibujoAutomatico();
 });
 
-canvas.addEventListener("mouseleave", () => dibujando = false);
-canvas.addEventListener("mousemove", dibujar);
 // ==========================================
-// 📱 CÓDIGO MEJORADO PARA CELULAR (CALIBRADO)
+// 🚀 SISTEMA DE DIBUJO UNIVERSAL (PC + MÓVIL)
 // ==========================================
 
-// Función auxiliar para obtener la posición EXACTA (considerando el estiramiento)
-function obtenerPosicionTouch(canvas, event) {
+// Función para obtener coordenadas exactas sin importar el dispositivo o el zoom
+function getCoordinates(e) {
     const rect = canvas.getBoundingClientRect();
-    const touch = event.touches[0];
-    
-    // Aquí está la magia: Calculamos la proporción entre el tamaño real y el tamaño en pantalla
+    let clientX, clientY;
+
+    // Detectar si es toque o mouse
+    if (e.touches && e.touches[0]) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+
+    // Calibración de escala para que el trazo esté SIEMPRE bajo el puntero/dedo
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
     return {
-        x: (touch.clientX - rect.left) * scaleX,
-        y: (touch.clientY - rect.top) * scaleY
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
     };
 }
 
-// 1. Al tocar la pantalla
-canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault(); 
+function iniciarDibujo(e) {
+    if (e.type === 'touchstart') e.preventDefault(); 
     dibujando = true;
-    
-    const pos = obtenerPosicionTouch(canvas, e);
-    
+    const pos = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
-}, { passive: false });
+}
 
-// 2. Al mover el dedo
-canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault(); 
+function moverPincel(e) {
     if (!dibujando) return;
+    if (e.type === 'touchmove') e.preventDefault(); 
 
-    const pos = obtenerPosicionTouch(canvas, e);
+    const pos = getCoordinates(e);
 
-    // Configuración del pincel
     ctx.lineWidth = grosorActual;
     ctx.lineCap = "round";
-    ctx.lineJoin = "round"; // Esto hace que las curvas sean más suaves
+    ctx.lineJoin = "round";
 
     if(modoGoma){
         ctx.globalCompositeOperation = "destination-out";
@@ -796,24 +804,32 @@ canvas.addEventListener("touchmove", function(e) {
         ctx.strokeStyle = colorActual;
     }
 
-    // Dibujar línea
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
     
-    // Reiniciar el trazo para que siga suave
+    // Suavizado de trazo
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
+}
 
-}, { passive: false });
+function detenerDibujo() {
+    if (dibujando) {
+        dibujando = false;
+        ctx.beginPath();
+        guardarDibujoAutomatico();
+    }
+}
 
-// 3. Al levantar el dedo
-canvas.addEventListener("touchend", function(e) {
-    e.preventDefault();
-    dibujando = false;
-    ctx.beginPath();
-    guardarDibujoAutomatico();
-});
-// ==========================================
+// ASIGNACIÓN DE EVENTOS (PC)
+canvas.addEventListener("mousedown", iniciarDibujo);
+canvas.addEventListener("mousemove", moverPincel);
+canvas.addEventListener("mouseup", detenerDibujo);
+canvas.addEventListener("mouseleave", detenerDibujo);
+
+// ASIGNACIÓN DE EVENTOS (CELULAR)
+canvas.addEventListener("touchstart", iniciarDibujo, { passive: false });
+canvas.addEventListener("touchmove", moverPincel, { passive: false });
+canvas.addEventListener("touchend", detenerDibujo, { passive: false });
 
 function dibujar(e){
     if(!dibujando) return;
