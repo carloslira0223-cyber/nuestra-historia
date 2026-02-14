@@ -6,6 +6,32 @@
 <title>Nuestra Historia Infinita</title>
 
 <style>
+
+    /* 📱 Ajustes para celular */
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 28px;
+        text-align: center;
+    }
+
+    button {
+        width: 85%;
+        font-size: 18px;
+        padding: 12px;
+    }
+
+    canvas {
+        width: 95%;
+        height: auto;
+    }
+
+}
+
 body{
     margin:0;
     font-family: 'Segoe UI', sans-serif;
@@ -150,6 +176,15 @@ button:active{
     box-shadow:0 0 20px rgba(255,192,203,0.3);
 }
 
+/* 👇 ESTO HACE QUE RESPETE LOS SALTOS DE LÍNEA */
+.mensajeBox p{
+    white-space: pre-line;
+}
+
+
+    
+
+
 .juegoContainer{ margin-top:20px; }
 
 .juego-grid{
@@ -227,6 +262,49 @@ button:active{
     box-shadow:0 0 25px rgba(255,255,255,0.15);
 }
 
+/* ✨ Animación galería */
+#galeriaFinal{
+    animation: aparecerGaleria 1s ease forwards;
+}
+
+@keyframes aparecerGaleria{
+    from{
+        opacity:0;
+        transform: translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+
+#contenedorGaleria img{
+    transition:0.4s;
+}
+#contenedorGaleria{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+    gap:12px;
+    max-height:300px;
+    overflow-y:auto;
+    padding:10px;
+}
+
+#contenedorGaleria img{
+    width:100%;
+    height:90px;
+    object-fit:cover;
+    border-radius:10px;
+    box-shadow:0 0 8px rgba(255,192,203,0.4);
+    transition:0.3s;
+}
+
+#contenedorGaleria img:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 20px hotpink;
+}
+
+
 </style>
 </head>
 
@@ -237,13 +315,13 @@ button:active{
 
 <div class="section active" id="inicio">
     <h1>🐢 Nuestra Historia ♾️✨</h1>
-    <h2>Solo es el comienzo.</h2>
+    <h2>Solo es el comienzo mi amorcita hermosa.</h2>
     <button onclick="mostrarCapitulos()">Entrar</button>
 </div>
 
 <div class="section hidden" id="capitulos">
     <div class="card">
-        <h1>Capítulo 1 🌙</h1>
+        <h1>Capítulo 1 🌸</h1>
         <h2>14 de Febrero</h2>
         <button onclick="abrirCap1()">Entrar</button>
     </div>
@@ -260,7 +338,7 @@ button:active{
     <div class="card">
 
         <div class="frasePrincipal">
-            Porque cada momento contigo ES HERMOSO ✨🐢
+            Porque cada momento contigo es HERMOSO ✨🐢
         </div>
 
         <div class="spotifyBox">
@@ -333,7 +411,58 @@ loading="lazy">
             </div>
         </div>
 
-        <button onclick="volver()">Volver</button>
+        </div>
+
+<!-- 🎨 MINI JUEGO DIBUJAR HISTORIAS -->
+<!-- 🎨 MINI JUEGO DIBUJAR HISTORIAS PRO -->
+<button onclick="mostrarDibujo()">🎨 Dibujar nuestra historia</button>
+
+<div id="juegoDibujo" class="hidden juegoContainer">
+
+    <h3 id="retoTexto">Dibuja: Nuestra primera cita 💕</h3>
+
+    <!-- 🎨 PALETA DE COLORES -->
+    <div style="margin:15px 0;">
+        <input type="color" id="colorPicker" value="#ff4da6">
+        <label style="margin-left:10px;">Grosor:</label>
+        <input type="range" id="grosorPincel" min="1" max="10" value="3">
+        <button onclick="activarGoma()" style="margin-left:10px;">🧽 Goma</button>
+
+    </div>
+
+    <canvas id="canvasDibujo" width="400" height="300"
+        style="background:white; border-radius:15px; cursor:crosshair;">
+    </canvas>
+
+    <br>
+
+    <button onclick="cambiarReto()">Siguiente historia ✨</button>
+    <button onclick="limpiarCanvas()">🧽 Limpiar</button>
+    <button onclick="descargarDibujo()">💾 Descargar dibujo</button>
+
+    <div id="mensajeFinalDibujo" class="fraseSecreta hidden">
+        Tus dibujos ahora son recuerdos hermosos ♾️💖
+    </div>
+
+  <div id="galeriaFinal" class="hidden" style="margin-top:20px;">
+    <h3>🖼 Nuestra Galería de Recuerdos</h3>
+
+    <div id="contenedorGaleria"></div>
+
+    <button onclick="descargarTodos()" style="margin-top:15px;">
+        💾 Descargar todos los recuerdos
+    </button>
+</div>
+
+
+
+
+</div>
+
+</div>
+
+<button onclick="volver()">Volver</button>
+
     </div>
 </div>
 
@@ -411,7 +540,70 @@ setInterval(function(){
     }
 },1000);
 
-const texto="AQUÍ VA TU MENSAJE DEL 14 💙";
+const texto = `Feliz 14 de febrero amor de mi alma hermosa 💗🎉
+
+Hello mi niñita hermosa sabes yo desde el inicio supe que no solo eras una historia sino mi libro entero 🥹💗
+
+Aún recuerdo el anterior 14 de febrero, estaba full nervioso porque quería decirte lo que sentía por ti… y desde que te conocí fue algo raro, algo increíble 😍💗
+
+Fue como si el destino me dijera: ella, ella 💗✨  
+Y después te fui conociendo y puedo asegurarte que eres el amor de mi alma.
+
+Cómo olvidar las historias, las risas, el primer beso, cada nucita que te echo, las cartas que me has regalado 🥹💗  
+¿Cómo no agradecerle a la vida si estoy con mi pequeñita hermosa? 💗🐢
+
+Eres la niñita más:
+
+Hermosa  
+Bonita  
+Estupenda  
+Guapísima  
+Lindota  
+Perfecta  
+Única  
+Inteligente  
+Divina  
+
+Y podría seguir más y más 😍💗
+
+Si me dieran la opción de volver a nacer iría corriendo a buscarte una y otra vez 💗🥹
+
+¿Por qué?
+
+Porque tú eres mi felicidad entera.  
+Contigo me siento especial, el hombre más afortunado 💗
+
+Gracias por todo amor de mi alma 🥹💗✨  
+Por este amor tan bonito que tenemos.
+
+Yo sí quiero despertar a tu lado siempre.  
+Yo sí quiero ser el causante de tus sonrisas.  
+Yo quiero hacerte la mujer más feliz 💞
+
+Mientras yo exista nunca te faltará nada porque siempre tendrás un loquito que:
+
+• TE AME POR SIEMPRE  
+• TE APOYE SIEMPRE  
+• ESTÉ CONTIGO INCLUSO EN LOS DÍAS MALOS  
+• TE DEJE SER TÚ 💗  
+
+Viajaría incluso a otro planeta por ti 💗🌙  
+Y créeme… siempre juntos ♾️💖
+
+Recuerda que nada es para siempre…  
+solo nosotros 💗🐢🐢💗
+
+Te amo infinitamente y más allá 💗✨
+
+Feliz 14 de febrero.  
+Este es el primero de infinitos 🥹💗
+
+Siempre seré tuyo 💗🐢
+
+Muackkkkk  
+Muackkkkk  
+Muackkkkk 😚💗♾️`;
+
 let i=0;
 function escribirMaquina(){
     const el=document.getElementById("mensajeMaquina");
@@ -516,6 +708,216 @@ setInterval(()=>{
     document.body.appendChild(estrella);
     setTimeout(()=>{estrella.remove();},2000);
 },15000);
+
+
+/* ========================= */
+/* MINI JUEGO DIBUJAR ULTRA PRO */
+/* ========================= */
+
+const canvas = document.getElementById("canvasDibujo");
+const ctx = canvas.getContext("2d");
+
+let dibujando = false;
+let colorActual = document.getElementById("colorPicker").value;
+let grosorActual = document.getElementById("grosorPincel").value;
+let modoGoma = false;
+
+
+
+document.getElementById("colorPicker").addEventListener("input", function(){
+    colorActual = this.value;
+    modoGoma = false;
+});
+
+document.getElementById("grosorPincel").addEventListener("input", function(){
+    grosorActual = this.value;
+});
+
+function activarGoma(){
+    modoGoma = true;
+}
+
+canvas.addEventListener("mousedown", () => dibujando = true);
+
+canvas.addEventListener("mouseup", () => {
+    dibujando = false;
+    ctx.beginPath();
+    guardarDibujoAutomatico();
+});
+
+canvas.addEventListener("mouseleave", () => dibujando = false);
+canvas.addEventListener("mousemove", dibujar);
+
+function dibujar(e){
+    if(!dibujando) return;
+
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineWidth = grosorActual;
+    ctx.lineCap = "round";
+
+    if(modoGoma){
+        ctx.globalCompositeOperation = "destination-out";
+    } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = colorActual;
+    }
+
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function limpiarCanvas(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    guardarDibujoAutomatico();
+}
+
+function mostrarDibujo(){
+    document.getElementById("juegoDibujo").classList.remove("hidden");
+}
+
+/* 🎨 Retos */
+const retos = [
+    "Nuestra proxima cita 💕",
+    "Nuestro primer abrazo 🫂",
+    "Un viaje juntos ✈️",
+    "Cómo nos ves en 5 años 🏡",
+    "Nuestro futuro con minis loquitos 👶🐢"
+];
+
+let indiceReto = 0;
+
+function cambiarReto(){
+
+    guardarDibujoAutomatico();
+
+    indiceReto++;
+
+    if(indiceReto < retos.length){
+
+        document.getElementById("retoTexto").innerText = 
+        "Dibuja: " + retos[indiceReto];
+
+        cargarDibujoGuardado();
+
+    } else {
+
+        document.getElementById("mensajeFinalDibujo")
+        .classList.remove("hidden");
+
+        mostrarGaleria();
+    }
+}
+
+
+
+
+
+
+/* 💾 Descargar dibujo */
+function descargarDibujo(){
+    const link = document.createElement("a");
+    link.download = "Nuestro_dibujo_" + indiceReto + ".png";
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+/* 🖼 GALERÍA FINAL */
+/* ========================= */
+/* SISTEMA ULTRA PRO FINAL */
+/* ========================= */
+
+let dibujosGuardados = JSON.parse(localStorage.getItem("galeriaAmor")) || {};
+
+function guardarDibujoAutomatico(){
+    dibujosGuardados[indiceReto] = canvas.toDataURL();
+    localStorage.setItem("galeriaAmor", JSON.stringify(dibujosGuardados));
+}
+
+function cargarDibujoGuardado(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(dibujosGuardados[indiceReto]){
+        const img = new Image();
+        img.src = dibujosGuardados[indiceReto];
+        img.onload = function(){
+            ctx.drawImage(img,0,0);
+        };
+    }
+}
+
+/* 🖼 GALERÍA FINAL */
+
+function mostrarGaleria(){
+
+    const galeria = document.getElementById("galeriaFinal");
+    const contenedor = document.getElementById("contenedorGaleria");
+
+    contenedor.innerHTML = "";
+
+    for(let key in dibujosGuardados){
+
+        const img = document.createElement("img");
+        img.src = dibujosGuardados[key];
+        img.style.width="100%";
+        img.style.borderRadius="10px";
+        img.style.boxShadow="0 0 10px pink";
+        img.style.cursor="pointer";
+
+        img.onclick = function(){
+            indiceReto = parseInt(key);
+            cargarDibujoGuardado();
+            document.getElementById("juegoDibujo")
+            .scrollIntoView({behavior:"smooth"});
+        };
+
+        contenedor.appendChild(img);
+    }
+
+    galeria.classList.remove("hidden");
+    lluviaFinal();
+}
+
+/* 💾 Descargar todos */
+
+function descargarTodos(){
+
+    for(let key in dibujosGuardados){
+
+        const link = document.createElement("a");
+        link.download = "Recuerdo_" + key + ".png";
+        link.href = dibujosGuardados[key];
+        link.click();
+    }
+}
+
+/* 🎉 Animación final */
+
+function lluviaFinal(){
+
+    for(let i=0;i<40;i++){
+        const part = document.createElement("div");
+        part.innerHTML="💖";
+        part.style.position="fixed";
+        part.style.left=Math.random()*100+"vw";
+        part.style.top="-20px";
+        part.style.fontSize="20px";
+        part.style.animation="caer 3s linear forwards";
+        document.body.appendChild(part);
+
+        setTimeout(()=>{part.remove();},3000);
+    }
+}
+
+
+
+
+
+
+
+
 
 </script>
 
