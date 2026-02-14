@@ -748,30 +748,46 @@ canvas.addEventListener("mouseup", () => {
 canvas.addEventListener("mouseleave", () => dibujando = false);
 canvas.addEventListener("mousemove", dibujar);
 // ==========================================
-// 📱 CÓDIGO NUEVO PARA QUE FUNCIONE EN CELULAR
+// 📱 CÓDIGO MEJORADO PARA CELULAR (CALIBRADO)
 // ==========================================
+
+// Función auxiliar para obtener la posición EXACTA (considerando el estiramiento)
+function obtenerPosicionTouch(canvas, event) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    
+    // Aquí está la magia: Calculamos la proporción entre el tamaño real y el tamaño en pantalla
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+        x: (touch.clientX - rect.left) * scaleX,
+        y: (touch.clientY - rect.top) * scaleY
+    };
+}
 
 // 1. Al tocar la pantalla
 canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault(); // Evita que la pantalla se mueva al dibujar
+    e.preventDefault(); 
     dibujando = true;
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
+    
+    const pos = obtenerPosicionTouch(canvas, e);
+    
     ctx.beginPath();
-    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.moveTo(pos.x, pos.y);
 }, { passive: false });
 
 // 2. Al mover el dedo
 canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault(); // Evita el scroll
+    e.preventDefault(); 
     if (!dibujando) return;
 
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    
-    // Configuración del pincel igual que en PC
+    const pos = obtenerPosicionTouch(canvas, e);
+
+    // Configuración del pincel
     ctx.lineWidth = grosorActual;
     ctx.lineCap = "round";
+    ctx.lineJoin = "round"; // Esto hace que las curvas sean más suaves
 
     if(modoGoma){
         ctx.globalCompositeOperation = "destination-out";
@@ -781,12 +797,12 @@ canvas.addEventListener("touchmove", function(e) {
     }
 
     // Dibujar línea
-    ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
     
-    // Preparar para el siguiente trazo (suavizado)
+    // Reiniciar el trazo para que siga suave
     ctx.beginPath();
-    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.moveTo(pos.x, pos.y);
 
 }, { passive: false });
 
