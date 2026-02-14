@@ -304,11 +304,6 @@ button:active{
     box-shadow:0 0 20px hotpink;
 }
 
-canvas{
-    touch-action: none;
-}
-
-
 
 </style>
 </head>
@@ -752,28 +747,29 @@ canvas.addEventListener("mouseup", () => {
 
 canvas.addEventListener("mouseleave", () => dibujando = false);
 canvas.addEventListener("mousemove", dibujar);
+// ==========================================
+// 📱 CÓDIGO NUEVO PARA QUE FUNCIONE EN CELULAR
+// ==========================================
 
-/* 📱 SOPORTE PARA CELULAR */
-
-canvas.addEventListener("touchstart", function(e){
-    e.preventDefault();
+// 1. Al tocar la pantalla
+canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault(); // Evita que la pantalla se mueva al dibujar
     dibujando = true;
-});
-
-canvas.addEventListener("touchend", function(e){
-    e.preventDefault();
-    dibujando = false;
-    ctx.beginPath();
-    guardarDibujoAutomatico();
-});
-
-canvas.addEventListener("touchmove", function(e){
-    e.preventDefault();
-    if(!dibujando) return;
-
-    const rect = canvas.getBoundingClientRect();
     const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+}, { passive: false });
 
+// 2. Al mover el dedo
+canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault(); // Evita el scroll
+    if (!dibujando) return;
+
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    
+    // Configuración del pincel igual que en PC
     ctx.lineWidth = grosorActual;
     ctx.lineCap = "round";
 
@@ -784,12 +780,24 @@ canvas.addEventListener("touchmove", function(e){
         ctx.strokeStyle = colorActual;
     }
 
+    // Dibujar línea
     ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
     ctx.stroke();
+    
+    // Preparar para el siguiente trazo (suavizado)
     ctx.beginPath();
     ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-});
 
+}, { passive: false });
+
+// 3. Al levantar el dedo
+canvas.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    dibujando = false;
+    ctx.beginPath();
+    guardarDibujoAutomatico();
+});
+// ==========================================
 
 function dibujar(e){
     if(!dibujando) return;
